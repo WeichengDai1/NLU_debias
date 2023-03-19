@@ -1,0 +1,5 @@
+**/roberta.base/**
+**/w2v/**
+*.pt
+*.out
+code/__pycache__/**
