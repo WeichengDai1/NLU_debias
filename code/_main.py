@@ -37,15 +37,18 @@ def MAIN():
     if pb.Base_Model=='TextCNN':
         if pb.Dataset_Name not in ['Suning', 'Taobao']:
             # English dictionary
-            w2v_path = './w2v/glove.840B.300d.txt'
+            w2v_path = '/scratch/yf1451/NLU_Final/glove.840B.300d.txt'
         # else:
         #     # Chinese dictionary
         #     w2v_path = './w2v/fasttext.300d.zh.txt'
-        # print(w2v_path)
+        print(w2v_path)   
         w2v_pickle = w2v_path + '.pickle'
+        # tmp_file = '/scratch/yf1451/NLU_Final/temp.txt' 
+        # _ = glove2word2vec(w2v_path, tmp_file)
+
         if os.path.exists(w2v_pickle)==False:
-            wv, word2id = KeyedVectors.load_word2vec_format(w2v_path, binary=False), {}
-            for i, word in enumerate(wv.index2word): word2id[word] = i
+            wv, word2id = KeyedVectors.load_word2vec_format(w2v_path, binary=False, no_header=True), {}
+            for i, word in enumerate(wv.index_to_key): word2id[word] = i
             embedding = nn.Embedding.from_pretrained(torch.FloatTensor(wv.vectors))
             pb.Pickle_Save([embedding, word2id], w2v_pickle)
         else:
@@ -54,7 +57,7 @@ def MAIN():
 
         network = TextCNN()
         if pb.Use_GPU == True:
-            network = network.cuda()
+            network = network.cuda(device=0)
 
         train_dataset = MyDataset_TextCNN(embedding, word2id, myAllDataset.train_examples)
         dev_dataset   = MyDataset_TextCNN(embedding, word2id, myAllDataset.dev_examples)
@@ -90,7 +93,7 @@ if __name__ == "__main__":
             pb.Weight = True if sys.argv[i+1]=='True' else False
         if sys.argv[i] == '--Save_Path' and i+1<len(sys.argv):
             pb.Save_Path = sys.argv[i+1]
-
+    torch.backends.cudnn.benchmark = False
     if pb.Operation == 'Test':
         pb.Dataset_Name = pb.Evaluate_Model.split('./models/')[-1].split('-')[0]
         pb.Operation_Times = 1
