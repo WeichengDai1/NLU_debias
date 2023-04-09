@@ -1,4 +1,4 @@
-from MyData import *
+from MyData_NER import *
 from MyModel import *
 
 
