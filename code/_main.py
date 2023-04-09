@@ -94,6 +94,7 @@ if __name__ == "__main__":
         if sys.argv[i] == '--Save_Path' and i+1<len(sys.argv):
             pb.Save_Path = sys.argv[i+1]
     torch.backends.cudnn.benchmark = False
+    
     if pb.Operation == 'Test':
         pb.Dataset_Name = pb.Evaluate_Model.split('./models/')[-1].split('-')[0]
         pb.Operation_Times = 1
