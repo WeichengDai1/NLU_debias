@@ -1,5 +1,5 @@
 from bert_serving.client import BertClient
-# from gensim.models import KeyedVectors
+from gensim.models import KeyedVectors
 from nltk.corpus import stopwords
 from progressbar import *
 from scipy import stats
@@ -32,16 +32,15 @@ import torch.optim as optim
 
 
 # All Hyperparameters
-
+torch.backends.cudnn.benchmark = False
 # variables
 Dataset_Names = ['Twitter']
-# Dataset_Names = ['Yelp_Hotel']
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
-Save_Path = './Results.txt'
+Save_Path = './Results_RoBERTa_Twitter_Bert-base-NER.txt'
 
 # public
 INF = 999999999
@@ -55,7 +54,7 @@ XMaxLenLimit = 300
 YList = []
 Mask_Token = '[MASK]'
 Train_Example_Num_Control = 80000
-Use_GPU = False
+Use_GPU = True
 Tqdm_Len = 80
 Train_Distribution = []
 # training
@@ -63,15 +62,15 @@ Operation = 'Train'
 Operation_Times = 1
 Counterfactual_Input_Control = 'Average'
 DataLoader_Shuffle = False
-Train_Batch_Size, DevTest_Batch_Size = 16, 8
-Epoch = 10
+Train_Batch_Size, DevTest_Batch_Size = 8, 8
+Epoch = 20
 Learning_Rate = 2e-5
 Embedding_Dimension = 300
 Dropout_Rate = 0.1
 Defined_Spliter = '____'
 # testing
 Beam_Search_Step = 0.1
-Beam_Search_Range = 2.0
+Beam_Search_Range = 20
 Evaluate_Model = './models/.pt'
 
 
