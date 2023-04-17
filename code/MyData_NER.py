@@ -114,6 +114,10 @@ class MyAllDataset():
         def Init_Public(train_examples, dev_examples, test_examples):
             examples = train_examples + dev_examples + test_examples
             bar = tqdm(total=len(examples), ncols=pb.Tqdm_Len)
+            keywords_type_count= {}
+            total_keywords_count= 0
+            total_words_count= 0
+
             for i, example in enumerate(examples):
                 # print(example.text)
                 sentence = example.text
@@ -124,6 +128,7 @@ class MyAllDataset():
                 else:
                     example.text = example.text.split(' ')
                 example.text = [word.strip() for word in example.text if len(word.strip())>0]
+                total_words_count += len(example.text)
 
                 # TODO: change to NER
                 tokenizer = AutoTokenizer.from_pretrained("dslim/bert-base-NER")
@@ -132,8 +137,16 @@ class MyAllDataset():
                 nlp = pipeline("ner", model=model, tokenizer=tokenizer)
                 keywords = nlp(sentence)
                 keywords_map = {}
+
                 for item in keywords:
                     keywords_map[item['word']] = item['entity'] 
+                    if item['entity'] in keywords_type_count:
+                        keywords_type_count[item['entity']] += 1
+                    else:
+                        keywords_type_count[item['entity']] = 1
+
+                    total_keywords_count += 1
+                    
 
                 # keywords = jieba.analyse.extract_tags(sentence, topK=pb.INF, withWeight=True)
                 # keywords_map = {}
@@ -151,6 +164,13 @@ class MyAllDataset():
             bar.close()
             for x in [example.text for example in examples]:
                 pb.XMaxLen = min(max(pb.XMaxLen, len(x)), pb.XMaxLenLimit)
+
+            print('All NER categories include: ' + str(list(keywords_type_count.keys())))
+            print('Total keywords identified: ' + str(total_keywords_count))
+            print('Total words count: ' + str(total_words_count))
+            print('NER categories keyword %: ' + str({keyword_type: round(type_count/total_words_count*100,2) for keyword_type, type_count in keywords_type_count.items()}))
+             
+
         Init_Public(train_examples, dev_examples, test_examples)
         print('pb.XMaxLen={}'.format(pb.XMaxLen))
         print('pb.YList={} {}'.format(len(pb.YList), pb.YList))
