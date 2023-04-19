@@ -40,7 +40,7 @@ EDA = False
 Weight = False
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
-Save_Path = './Results_RoBERTa_Twitter_Bert-base-NER.txt'
+Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_Bert-base-NER.txt'
 
 # public
 INF = 999999999

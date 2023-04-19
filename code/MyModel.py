@@ -297,8 +297,9 @@ class RoBERTa(SuperNetwork):
 
         self.hidden_layer = 100
 
-        self.roberta = RobertaModel.from_pretrained('./roberta.base', checkpoint_file='model.pt')
-
+        # self.roberta = RobertaModel.from_pretrained('./roberta.base', checkpoint_file='model.pt')
+        self.roberta = torch.hub.load('pytorch/fairseq', 'roberta.base')
+        
         self.mlp = nn.Sequential(
             nn.Linear(self.emb_dim, self.hidden_layer),
             nn.Tanh(),

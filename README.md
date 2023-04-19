@@ -1,5 +1,5 @@
 # NLU_Debias
-## environment setup
+## Env setup
 ```
     pip install -U gensim
     pip3 install nltk
@@ -12,14 +12,15 @@
     pip install fairseq
     pip install tensorboardX
 ```
-## download the GLOVE data
+## Download GLOVE vectors, change to w2v format
 Common Crawl (840B tokens, 2.2M vocab, cased, 300d vectors, 2.03 GB download)
 
 `wget https://nlp.stanford.edu/data/glove.840B.300d.zip` 
 
 `unzip ./glove.840B.300d.zip`
 
-**use this linux terminal command to add to the first line: '#Tokens #Dimension' to the .txt file**
+According to [ref](https://radimrehurek.com/gensim/scripts/glove2word2vec.html),
+**In order to make sure the KeyedVectors.load_word2vec_format() works, use this linux terminal command to add to the first line in place: '#Tokens #Dimension' to the .txt file**
 ```
-  sed -i '1i 2196017 300' glove.840B.300d.txt 
+sed -i '1i 2196017 300' glove.840B.300d.txt 
 ```
