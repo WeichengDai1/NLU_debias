@@ -50,12 +50,12 @@ class MyAllDataset():
         pb.Print_Line(color='blue')
 
         if pb.EDA==False:
-            train_datapath = '/scratch/yf1451/NLU_Final/Corsair/data/' + self.dataset_name + '.train.jsonl'
+            train_datapath = './data/' + self.dataset_name + '.train.jsonl'
         else:
             pb.Print('pb.EDA=Ture', color='blue')
-            train_datapath = '/scratch/yf1451/NLU_Final/Corsair/data/data.eda/' + self.dataset_name + '.train.eda.jsonl'
-        dev_datapath = '/scratch/yf1451/NLU_Final/Corsair/data/' + self.dataset_name + '.dev.jsonl'
-        test_datapath = '/scratch/yf1451/NLU_Final/Corsair/data/' + self.dataset_name + '.test.jsonl'
+            train_datapath = '.data/' + self.dataset_name + '.train.eda.jsonl'
+        dev_datapath = './data/' + self.dataset_name + '.dev.jsonl'
+        test_datapath = './data/' + self.dataset_name + '.test.jsonl'
 
         # read data
         def Read_from_Datapath(data_path):

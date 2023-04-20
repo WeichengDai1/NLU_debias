@@ -1,4 +1,5 @@
-from MyData_NER import *
+from MyData_spacy import *
+# from MyData_NER import *
 from MyModel import *
 
 
@@ -37,7 +38,7 @@ def MAIN():
     if pb.Base_Model=='TextCNN':
         if pb.Dataset_Name not in ['Suning', 'Taobao']:
             # English dictionary
-            w2v_path = '/scratch/yf1451/NLU_Final/glove.840B.300d.txt'
+            w2v_path = '/home/luoyao/1012/GLOVE_data/glove.840B.300d.txt'
         # else:
         #     # Chinese dictionary
         #     w2v_path = './w2v/fasttext.300d.zh.txt'

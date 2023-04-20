@@ -25,6 +25,8 @@ import json
 import jieba
 import jieba.analyse
 import spacy
+import en_core_web_sm
+nlp = spacy.load("en_core_web_sm")
 
 
 
@@ -114,53 +116,53 @@ class MyAllDataset():
         def Init_Public(train_examples, dev_examples, test_examples):
             examples = train_examples + dev_examples + test_examples
             bar = tqdm(total=len(examples), ncols=pb.Tqdm_Len)
+            
+            keywords_type_count= {}
+            total_word_counts = 0
+            
             for i, example in enumerate(examples):
                 # print(example.text)
                 sentence = example.text
                 # print(sentence)
-
+                total_word_counts += len(sentence)
                 if pb.Base_Model=='TextCNN':
                     example.text = pb.WordSegmentation(example.text)
                 else:
                     example.text = example.text.split(' ')
                 example.text = [word.strip() for word in example.text if len(word.strip())>0]
 
-                keywords = jieba.analyse.extract_tags(sentence, topK=pb.INF, withWeight=True)
+                # keywords = jieba.analyse.extract_tags(sentence, topK=pb.INF, withWeight=True)
                 
                 ###############################
                 ## TODO: change this into spacy, scipy
                 ###############################
-                
-                ## TODO: look into rate=1.0
-                
-                print('keywords: ', keywords)
-                # keywords:  [('got', 1.4943459378625), ('my', 1.4943459378625), ('flu', 1.4943459378625), \
-                    # ('shot', 1.4943459378625), ('isn', 1.4943459378625), ('supposed', 1.4943459378625), \
-                        # ('happen', 1.4943459378625), ('...', 1.4943459378625)]
+                doc = nlp(sentence)
+                lis = []
+                for sent in doc.sents:
+                    for token in sent:
+                        lis.append((token, token.ent_type_)) # [(Dena, 'PERSON'), (gave, ''), (me, ''), (a, ''), (flue, ''), (shot, ''), (,, ''), (in, ''), (New, 'GPE'), (York, 'GPE'), (?, '')]
                 
                 keywords_map = {}
-                for item in keywords:
-                    keywords_map[item[0]] = item[1]
-                    
-                print('keywords_map: ', keywords_map)
-                # keywords_map:  {'got': 1.4943459378625, 'my': 1.4943459378625, \
-                    # 'flu': 1.4943459378625, 'shot': 1.4943459378625, \
-                        # 'isn': 1.4943459378625, 'supposed': 1.4943459378625, \
-                            # 'happen': 1.4943459378625, '...': 1.4943459378625}
-                
+                for item in lis:
+                    if item[1]:
+                        keywords_map[str(item[0])] = item[1] # {'Dena': 'PERSON'}
+                        keywords_type_count[str(item[1])] = keywords_type_count.get(item[1],0)+1 ## update the count
+                # print(f"keywords_map = {keywords_map}")
+                # print(f"example.text = {example.text}")
                 for j in range(len(example.text)):
+                    # print(f"example.text[j] = {example.text[j]}")
                     example.fully_counterfactual_text.append(pb.Mask_Token)
                     if example.text[j] in keywords_map:
                         example.partial_counterfactual_text.append(pb.Mask_Token)
                     else:
                         example.partial_counterfactual_text.append(example.text[j])
                         
-                print('example.fully_counterfactual_text: ', example.fully_counterfactual_text)
-                # example.fully_counterfactual_text:  ['[MASK]', '[MASK]', '[MASK]', '[MASK]', \
-                    # '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]']
-                print('example.partial_counterfactual_text: ', example.partial_counterfactual_text)
-                # example.partial_counterfactual_text:  ['i', '[MASK]', '[MASK]', '[MASK]', \
-                    # '[MASK]', 'this', "isn't", '[MASK]', 'to', '[MASK]', '[MASK]']
+                # print('example.fully_counterfactual_text: ', example.fully_counterfactual_text)
+                # # example.fully_counterfactual_text:  ['[MASK]', '[MASK]', '[MASK]', '[MASK]', \
+                #     # '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]', '[MASK]']
+                # print('example.partial_counterfactual_text: ', example.partial_counterfactual_text)
+                # # example.partial_counterfactual_text:  ['i', '[MASK]', '[MASK]', '[MASK]', \
+                #     # '[MASK]', 'this', "isn't", '[MASK]', 'to', '[MASK]', '[MASK]']
                 
                 # exit()
 
@@ -169,6 +171,10 @@ class MyAllDataset():
             bar.close()
             for x in [example.text for example in examples]:
                 pb.XMaxLen = min(max(pb.XMaxLen, len(x)), pb.XMaxLenLimit)
+                
+            print('keywords_type_count={}'.format(keywords_type_count))
+            print('total_word_counts={}'.format(total_word_counts))
+            
         Init_Public(train_examples, dev_examples, test_examples)
         print('pb.XMaxLen={}'.format(pb.XMaxLen))
         print('pb.YList={} {}'.format(len(pb.YList), pb.YList))

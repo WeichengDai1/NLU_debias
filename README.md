@@ -11,6 +11,9 @@
     pip install matplotlib
     pip install fairseq
     pip install tensorboardX
+    pip install -U spacy
+    python -m spacy download en_core_web_sm
+
 ```
 ## Download GLOVE vectors, change to w2v format
 Common Crawl (840B tokens, 2.2M vocab, cased, 300d vectors, 2.03 GB download)
