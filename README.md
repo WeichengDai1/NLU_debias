@@ -24,3 +24,14 @@ According to [ref](https://radimrehurek.com/gensim/scripts/glove2word2vec.html),
 ```
 sed -i '1i 2196017 300' glove.840B.300d.txt 
 ```
+
+## Dataset
+**Twitter**:
+```
+Total: 2175 lines
+    |--- train_examples: 1631(74.99%)
+    |--- dev_examples: 272(12.51%)
+    |--- test_examples: 272(12.51%)
+```
+
+**Yelp_Hotel**
