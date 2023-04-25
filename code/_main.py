@@ -1,5 +1,5 @@
-from MyData_spacy import *
-# from MyData_NER import *
+# from MyData_spacy import *
+from MyData_NER import *
 from MyModel import *
 
 

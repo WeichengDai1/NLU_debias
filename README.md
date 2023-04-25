@@ -38,3 +38,9 @@ Total: 2175 lines
 ```
 
 **Yelp_Hotel**
+```
+Total: 34959 lines
+    |--- train_examples: 20975(60%)
+    |--- dev_examples: 6991(20%)
+    |--- test_examples: 6991(20%)
+```
