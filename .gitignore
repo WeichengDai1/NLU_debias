@@ -2,4 +2,6 @@
 **/w2v/**
 *.pt
 *.out
+*.txt
+*.pkl
 code/__pycache__/**

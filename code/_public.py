@@ -34,16 +34,16 @@ import torch.optim as optim
 # All Hyperparameters
 torch.backends.cudnn.benchmark = False
 # variables
-Dataset_Names = ['Twitter']
+Dataset_Names = ['2018-Valence-oc-En']
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
 # Base_Model = 'TextCNN'
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
-# Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER.txt'
+Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
-Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_test.txt'
+# Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_test.txt'
 
 
 # public
