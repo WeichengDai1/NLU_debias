@@ -207,7 +207,7 @@ class SuperNetwork(nn.Module):
                     w2c[word] = [[0 for _ in pb.YList], [0 for _ in pb.YList]]
                 w2c[word][0][factual_labels[i]] += 1
                 w2c[word][1][counterfactual_labels[i]] += 1
-        print(f"****************w2c = {w2c}")
+        # print(f"****************w2c = {w2c}")
         # exit()
         for word in w2c.keys():
             u = w2c[word][0]
