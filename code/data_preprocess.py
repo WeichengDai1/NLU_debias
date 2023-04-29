@@ -2,6 +2,8 @@
 import json
 import random 
 import os
+import numpy as np
+
 random.seed(1234)
 
 base_data_saveto_dir = '/home/luoyao/1012/GLOVE_data/'
@@ -49,7 +51,7 @@ for file_dir in file_dir_lis:
             line = line.strip('\n').strip('\t').split('valence')
             # if file_dir.strip('.txt').split('-')[-1]!='test':
             try:
-                rating = line[1].strip().strip('\t').split(':')[0] ## eg. -2
+                rating = str(np.sign(int(line[1].strip().strip('\t').split(':')[0]))) ## eg. -2
             except:
                 print(f"file_dir = {file_dir}, line = {line}")
                 rating = 'None'

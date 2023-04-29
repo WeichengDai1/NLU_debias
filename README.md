@@ -44,3 +44,11 @@ Total: 34959 lines
     |--- dev_examples: 6991(20%)
     |--- test_examples: 6991(20%)
 ```
+
+**2018-Valence-oc-En**
+```
+Total: 1630 lines
+    |--- train_examples: 1181(72.45%)
+    |--- dev_examples: 224(13.74%)
+    |--- test_examples: 225(13.80%)
+```
