@@ -121,7 +121,7 @@ class SuperNetwork(nn.Module):
 
         self.Save(dev_fmaf1, best_dev_cmaf1, rates, test_maf1s, factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness, mark=mark)
 
-    def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None, mark=None):
+    def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None, mark=1):
         if pb.Use_GPU == True: torch.cuda.empty_cache() 
         actual_x, actual_y, true_input, true_labels, factual_outputs, partial_counterfactual_outputs = [], [], [], [], [], []
         testbar = tqdm(total=len(test_loader), ncols=pb.Tqdm_Len, desc='Export EEC Result')

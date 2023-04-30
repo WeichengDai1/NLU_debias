@@ -34,12 +34,14 @@ import torch.optim as optim
 # All Hyperparameters
 torch.backends.cudnn.benchmark = False
 # variables
-Dataset_Names = ['2018-Valence-oc-En']
+Dataset_Names = ['EL_oc']
+# Dataset_Names = ['EEC']
+# Dataset_Names = ['2018-Valence-oc-En']
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
-# Base_Model = 'TextCNN'
-Base_Model = 'RoBERTa'
+Base_Model = 'TextCNN'
+# Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
 Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_test.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
@@ -59,7 +61,7 @@ YList = []
 Mask_Token = '[MASK]'
 Train_Example_Num_Control = 80000
 Use_GPU = True
-Tqdm_Len = 80
+Tqdm_Len = 100
 Train_Distribution = []
 # training
 Operation = 'Train'
