@@ -115,13 +115,13 @@ class SuperNetwork(nn.Module):
 
         rates = [(best_x,best_y), (0.0,0.0), (1.0,0.0), (0.0,1.0), (0.5,0.5)]
         test_maf1s = self.Test_maF1(test_loader, fully_counterfactual_output, rates=rates)
-        self.EEC_Output(test_loader, fully_counterfactual_output, rates=rates)
+        self.EEC_Output(test_loader, fully_counterfactual_output, rates=rates, mark=mark)
 
         factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness = self.Test_Fairness(test_loader, fully_counterfactual_output, rate=(best_x,best_y))
 
         self.Save(dev_fmaf1, best_dev_cmaf1, rates, test_maf1s, factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness, mark=mark)
 
-    def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None):
+    def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None, mark=1):
         if pb.Use_GPU == True: torch.cuda.empty_cache() 
         actual_x, actual_y, true_input, true_labels, factual_outputs, partial_counterfactual_outputs = [], [], [], [], [], []
         testbar = tqdm(total=len(test_loader), ncols=pb.Tqdm_Len, desc='Export EEC Result')
@@ -147,7 +147,7 @@ class SuperNetwork(nn.Module):
                                 , 'factual_outputs':factual_outputs \
                                 , 'counterfactual_outputs':counterfactual_outputs})
          
-        with open('./EEC_test_out.pkl', 'wb') as f:
+        with open('./saves/EEC_test_out_epoch_{}.pkl'.format(mark), 'wb') as f:
             pickle.dump(test_ouptut, f) 
         if pb.Use_GPU == True: torch.cuda.empty_cache()
 

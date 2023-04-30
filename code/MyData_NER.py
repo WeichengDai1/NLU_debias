@@ -97,8 +97,8 @@ class MyAllDataset():
 
         # analysis
         random.shuffle(train_examples)
-        random.shuffle(dev_examples)
-        random.shuffle(test_examples)
+        # random.shuffle(dev_examples)
+        # random.shuffle(test_examples)
         trLen, deLen, teLen = len(train_examples), len(dev_examples), len(test_examples)
         train_examples = train_examples[:min(len(train_examples), pb.Train_Example_Num_Control)]
         dev_examples = dev_examples[:min(len(dev_examples), int(len(train_examples)*1.0/trLen*deLen))]
