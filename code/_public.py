@@ -40,8 +40,8 @@ Dataset_Names = ['EL_oc']
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
-Base_Model = 'TextCNN'
-# Base_Model = 'RoBERTa'
+# Base_Model = 'TextCNN'
+Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
 Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_test.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
