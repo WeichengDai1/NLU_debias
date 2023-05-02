@@ -3,6 +3,7 @@ from MyModel_EEC import *
 
 
 
+torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
 def MAIN():
 
     # initialize
@@ -66,12 +67,12 @@ def MAIN():
             network = network.cuda()
 
         train_dataset = MyDataset_RoBERTa(myAllDataset.train_examples, network.roberta)
-        dev_dataset = MyDataset_RoBERTa(myAllDataset.dev_examples, network.roberta)
-        test_dataset = MyDataset_RoBERTa(myAllDataset.test_examples, network.roberta)
+        dev_dataset   = MyDataset_RoBERTa(myAllDataset.dev_examples, network.roberta)
+        test_dataset  = MyDataset_RoBERTa(myAllDataset.test_examples, network.roberta)
 
     train_loader = DataLoader(train_dataset, batch_size=pb.Train_Batch_Size, shuffle=True)
-    dev_loader = DataLoader(dev_dataset, batch_size=pb.DevTest_Batch_Size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=pb.DevTest_Batch_Size, shuffle=False)
+    dev_loader   = DataLoader(dev_dataset, batch_size=pb.DevTest_Batch_Size, shuffle=False)
+    test_loader  = DataLoader(test_dataset, batch_size=pb.DevTest_Batch_Size, shuffle=False)
 
     if pb.Operation == 'Train':
         network.Train(train_loader, dev_loader, test_loader)

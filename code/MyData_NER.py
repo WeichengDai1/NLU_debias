@@ -37,7 +37,8 @@ class Example:
 
 class MyAllDataset():
     def __init__(self, dataset_name):
-        self.dataset_name = dataset_name
+        # self.dataset_name = dataset_name
+        self.dataset_name = 'EL_oc'
         self.train_examples = []
         self.dev_examples = []
         self.test_examples = []
@@ -69,6 +70,9 @@ class MyAllDataset():
         train_examples = Read_from_Datapath(train_datapath)
         dev_examples   = Read_from_Datapath(dev_datapath)
         test_examples  = Read_from_Datapath(test_datapath)
+        
+        print('original dev length,', len(dev_examples))
+        print('original test length,', len(test_examples))
 
         pb.YList = sorted(list(set([example.label for example in train_examples+dev_examples+test_examples])))
 
@@ -87,22 +91,22 @@ class MyAllDataset():
             dev_examples_, test_examples_ = [], []
             for key in label2examples.keys():
                 subexamples = label2examples[key]
-                random.shuffle(subexamples)
+                # random.shuffle(subexamples)
                 seperator = int(len(subexamples) / 2)
                 dev_examples_.extend(subexamples[:seperator])
                 test_examples_.extend(subexamples[seperator:])
             pb.Print('Dev and Test Conformed.', color='green')
             return dev_examples_, test_examples_
-        dev_examples, test_examples = Conform_Dev_Test(dev_examples, test_examples)
+        # dev_examples, test_examples = Conform_Dev_Test(dev_examples, test_examples)
 
         # analysis
         random.shuffle(train_examples)
         # random.shuffle(dev_examples)
         # random.shuffle(test_examples)
         trLen, deLen, teLen = len(train_examples), len(dev_examples), len(test_examples)
-        train_examples = train_examples[:min(len(train_examples), pb.Train_Example_Num_Control)]
-        dev_examples = dev_examples[:min(len(dev_examples), int(len(train_examples)*1.0/trLen*deLen))]
-        test_examples = test_examples[:min(len(test_examples), int(len(train_examples)*1.0/trLen*teLen))]
+        # train_examples = train_examples[:min(len(train_examples), pb.Train_Example_Num_Control)]
+        # dev_examples = dev_examples[:min(len(dev_examples), int(len(train_examples)*1.0/trLen*deLen))]
+        # test_examples = test_examples[:min(len(test_examples), int(len(train_examples)*1.0/trLen*teLen))]
         trLen, deLen, teLen = len(train_examples), len(dev_examples), len(test_examples)
         alLen = trLen + deLen + teLen
         print('#train_examples: {}({:.2%})'.format(trLen, trLen * 1.0 / alLen))
@@ -210,6 +214,9 @@ class MyAllDataset():
         self.train_examples = train_examples
         self.dev_examples   = dev_examples
         self.test_examples  = test_examples
+        
+        print('afterall dev length, ', len(dev_examples))
+        print('afterall test length', len(test_examples))
 
     def Label_Balance(self, examples):
 
