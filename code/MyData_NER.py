@@ -158,7 +158,7 @@ class MyAllDataset():
                 #     keywords_map[item[0]] = item[1]
                 for j in range(len(example.text)):
                     example.fully_counterfactual_text.append(pb.Mask_Token)
-                    if example.text[j] in keywords_map:
+                    if example.text[j] not in keywords_map: ## flip the mask
                         example.partial_counterfactual_text.append(pb.Mask_Token)
                     else:
                         example.partial_counterfactual_text.append(example.text[j])
