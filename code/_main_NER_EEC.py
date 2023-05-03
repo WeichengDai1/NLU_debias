@@ -33,7 +33,7 @@ def MAIN():
     pb.Print_Line(color='blue')
 
     # prepare a specific dataset
-    myAllDataset = MyAllDataset(pb.Dataset_Name)
+    # myAllDataset = MyAllDataset(pb.Dataset_Name)
 
     if pb.Base_Model=='TextCNN':
         if pb.Dataset_Name not in ['Suning', 'Taobao']:
@@ -56,7 +56,7 @@ def MAIN():
         network = TextCNN()
         if pb.Use_GPU == True:
             network = network.cuda()
-
+        myAllDataset = MyAllDataset(pb.Dataset_Name)
         train_dataset = MyDataset_TextCNN(embedding, word2id, myAllDataset.train_examples)
         dev_dataset   = MyDataset_TextCNN(embedding, word2id, myAllDataset.dev_examples)
         test_dataset  = MyDataset_TextCNN(embedding, word2id, myAllDataset.test_examples)
@@ -65,7 +65,10 @@ def MAIN():
         network = RoBERTa()
         if pb.Use_GPU == True:
             network = network.cuda()
-
+        # torch.save(network.state_dict(), 'saves/model_pt_epoch_test.pt'.format(0))
+        # print('save success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        # exit()
+        myAllDataset = MyAllDataset(pb.Dataset_Name)
         train_dataset = MyDataset_RoBERTa(myAllDataset.train_examples, network.roberta)
         dev_dataset   = MyDataset_RoBERTa(myAllDataset.dev_examples, network.roberta)
         test_dataset  = MyDataset_RoBERTa(myAllDataset.test_examples, network.roberta)
