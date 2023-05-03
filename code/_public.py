@@ -43,7 +43,7 @@ Weight = False
 # Base_Model = 'TextCNN'
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
-Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER.txt'
+Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_test.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_test.txt'
 
