@@ -29,7 +29,7 @@ import jieba.analyse
 import matplotlib.pyplot as plt
 from fairseq.models.roberta import RobertaModel
 torch.backends.cudnn.benchmark = False
-
+import _public as pb 
 
 class SuperNetwork(nn.Module):
     def __init__(self):
@@ -118,7 +118,7 @@ class SuperNetwork(nn.Module):
         self.EEC_Output(test_loader, fully_counterfactual_output, rates=rates, mark=mark)
 
         factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness = self.Test_Fairness(test_loader, fully_counterfactual_output, rate=(best_x,best_y))
-        torch.save(self.state_dict(), 'saves/model_pt_epoch_{}.pt'.format(mark))
+        torch.save(self.state_dict(), 'saves/{}_{}_model_pt_epoch_{}.pt'.format(pb.Base_Model, pb.Dataset_Names[0], mark))
         self.Save(dev_fmaf1, best_dev_cmaf1, rates, test_maf1s, factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness, mark=mark)
 
     def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None, mark=1):
