@@ -95,7 +95,17 @@ class SuperNetwork(nn.Module):
         self.eval()
         with torch.no_grad():
             for batch_idx, (x, fcx, pcx, y, x_tensor, fcx_tensor, pcx_tensor, y_tensor) in enumerate(loader):
-                matrix += torch.sum(x_tensor, dim=0)
+                try:
+                    matrix += torch.sum(x_tensor, dim=0)
+                    # print(f"matrix.shape = {matrix.shape}")
+                    # for x in x_tensor:
+                    #     print(x.shape)
+                    #     exit()
+                except:
+                    print(f"matrix.shape = {matrix.shape}")
+                    for x in x_tensor:
+                        print(x.shape)
+                    exit()
                 cnt += x_tensor.size()[0]
                 if pb.Use_GPU == True: torch.cuda.empty_cache()
                 bar.update(1)
@@ -118,7 +128,7 @@ class SuperNetwork(nn.Module):
         self.EEC_Output(test_loader, fully_counterfactual_output, rates=rates, mark=mark)
 
         factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness = self.Test_Fairness(test_loader, fully_counterfactual_output, rate=(best_x,best_y))
-        torch.save(self.state_dict(), './saves/{}_model_pt_epoch_{}.pt'.format(pb.Base_Model+'_'+pb.Dataset_Names[0], mark))
+        torch.save(self.state_dict(), './saves_in/{}_model_pt_epoch_{}.pt'.format(pb.Base_Model+'_'+pb.Dataset_Names[0], mark))
         self.Save(dev_fmaf1, best_dev_cmaf1, rates, test_maf1s, factual_label_fairness, counterfactual_label_fairness, factual_keyword_fairness, counterfactual_keyword_fairness, mark=mark)
 
     def EEC_Output(self, test_loader, fully_counterfactual_output, rates=None, mark=1):
@@ -147,7 +157,7 @@ class SuperNetwork(nn.Module):
                                 , 'factual_outputs':factual_outputs \
                                 , 'counterfactual_outputs':counterfactual_outputs})
          
-        with open('./saves/{}_epoch_{}.pkl'.format(pb.Base_Model+'_'+pb.Dataset_Names[0],mark), 'wb') as f:
+        with open('./saves_in/{}_epoch_{}.pkl'.format(pb.Base_Model+'_'+pb.Dataset_Names[0],mark), 'wb') as f:
             pickle.dump(test_ouptut, f) 
         if pb.Use_GPU == True: torch.cuda.empty_cache()
 

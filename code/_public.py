@@ -37,13 +37,16 @@ torch.backends.cudnn.benchmark = False
 # Dataset_Names = ['EL_oc', ]
 # Dataset_Names = ['EEC']
 Dataset_Names = ['2018-Valence-oc-En']
+# Dataset_Names = ['experiment']
+# Dataset_Names = ['Twitter']
+
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
 # Base_Model = 'TextCNN'
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
-Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_test.txt'
+Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_in.txt' # _flip
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_test.txt'
 
