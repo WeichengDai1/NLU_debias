@@ -38,14 +38,21 @@ Dataset_Names = ['EL_oc', ]
 # Dataset_Names = ['experiment', ]
 
 # Dataset_Names = ['EEC']
-# Dataset_Names = ['2018-Valence-oc-En']
+Dataset_Names = ['2018-Valence-oc-En']
+# Dataset_Names = ['experiment']
+# Dataset_Names = ['Twitter']
+
 # ['HyperPartisan','Twitter','ARC','SCIERC','ChemProt','Economy','20News','Parties','Yelp_Hotel','Taobao','Suning']
 EDA = False
 Weight = False
 # Base_Model = 'TextCNN'
 Base_Model = 'RoBERTa'
 # TextCNN RoBERTa
+<<<<<<< HEAD
 Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_in_dim.txt'
+=======
+Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_NER_3class_new_in.txt' # _flip
+>>>>>>> a776e86d7fb3146323da2ccd47e2d3f2022f50d2
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_spacy.txt'
 # Save_Path = f'./Results_{Base_Model}_{Dataset_Names[0]}_test.txt'
 
