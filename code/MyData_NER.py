@@ -37,8 +37,8 @@ class Example:
 
 class MyAllDataset():
     def __init__(self, dataset_name):
-        # self.dataset_name = dataset_name
-        self.dataset_name = 'EL_oc'
+        self.dataset_name = dataset_name
+        # self.dataset_name = 'EL_oc'
         self.train_examples = []
         self.dev_examples = []
         self.test_examples = []
@@ -158,10 +158,14 @@ class MyAllDataset():
                 #     keywords_map[item[0]] = item[1]
                 for j in range(len(example.text)):
                     example.fully_counterfactual_text.append(pb.Mask_Token)
-                    if example.text[j] not in keywords_map: ## flip the mask
+                    if example.text[j] in keywords_map: ## flip flip the mask
                         example.partial_counterfactual_text.append(pb.Mask_Token)
                     else:
                         example.partial_counterfactual_text.append(example.text[j])
+                    
+                    # print('example.fully_counterfactual_text:', example.fully_counterfactual_text)
+                    # print('example.partial_counterfactual_text', example.partial_counterfactual_text)
+                    
 
                 bar.set_description( 'Word Segmentating and Partial_Counterfactual Processing')
                 bar.update(1)

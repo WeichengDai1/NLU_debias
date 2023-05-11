@@ -58,7 +58,7 @@ class SuperNetwork(nn.Module):
                 else:
                     # pb.Print('pb.Weight=Ture', color='blue')
                     for j in range(len(factual_output)):
-                        ps = F.softmax(factual_output[j])
+                        ps = F.softmax(factual_output[j], dim=-1)
                         index = y_tensor[j]
                         p = ps[index]
                         q = pb.Train_Distribution[index]
@@ -66,7 +66,7 @@ class SuperNetwork(nn.Module):
                         W = w if j == 0 else W + w
                     loss = None
                     for j in range(len(factual_output)):
-                        ps = F.softmax(factual_output[j])
+                        ps = F.softmax(factual_output[j], dim=-1)
                         index = y_tensor[j]
                         p = ps[index]
                         l = -torch.log(p)
@@ -87,7 +87,7 @@ class SuperNetwork(nn.Module):
     # Get the embedding of a counterfactual document (averaged on training set)
     def Get_Counterfactual_Input(self, loader):
         if pb.Use_GPU == True: torch.cuda.empty_cache()
-
+        print('self.shape', self.shape)
         matrix, cnt = torch.Tensor(np.random.random(self.shape)), 0
         if pb.Use_GPU==True: matrix = matrix.cuda(device=0)
 
@@ -110,7 +110,9 @@ class SuperNetwork(nn.Module):
         torch.backends.cudnn.benchmark = False
         fully_counterfactual_input = self.Get_Counterfactual_Input(train_loader)
         fully_counterfactual_output = self.forward(fully_counterfactual_input).cpu().data[0].numpy()
-
+        
+        print(fully_counterfactual_output.shape)
+        
         dev_fmaf1, best_dev_cmaf1, best_x, best_y = self.Test_maF1(dev_loader, fully_counterfactual_output, rates=None)
 
         rates = [(best_x,best_y), (0.0,0.0), (1.0,0.0), (0.0,1.0), (0.5,0.5)]
@@ -147,7 +149,7 @@ class SuperNetwork(nn.Module):
                                 , 'factual_outputs':factual_outputs \
                                 , 'counterfactual_outputs':counterfactual_outputs})
          
-        with open('./saves/{}_epoch_{}.pkl'.format(pb.Base_Model+'_'+pb.Dataset_Names[0],mark), 'wb') as f:
+        with open('./saves/{}_epoch_{}_{}.pkl'.format(pb.Base_Model+'_'+pb.Dataset_Names[0],mark, self.hidden_layer), 'wb') as f:
             pickle.dump(test_ouptut, f) 
         if pb.Use_GPU == True: torch.cuda.empty_cache()
 
@@ -178,7 +180,8 @@ class SuperNetwork(nn.Module):
                     while True:
                         key = '{:.2f}_{:.2f}'.format(cur_x, cur_y)
                         if key not in cmaf1_map.keys():
-                            _, predict_labels = self.Counterfactual_Predict(factual_outputs, fully_counterfactual_output, partial_counterfactual_outputs, cur_x, cur_y)
+                            _, predict_labels = self.Counterfactual_Predict(factual_outputs, \
+                                fully_counterfactual_output, partial_counterfactual_outputs, cur_x, cur_y)
                             cmaf1 = pb.Get_Report(true_labels, predict_labels)['macro_f1']
                             cmaf1_map[key] = cmaf1
                         cmaf1 = cmaf1_map[key]
@@ -259,8 +262,11 @@ class SuperNetwork(nn.Module):
     def Counterfactual_Predict(self, factual_outputs, fully_counterfactual_output, partial_counterfactual_outputs, cur_x, cur_y):
         factual_outputs = np.array(factual_outputs)
         fully_counterfactual_output = np.array(fully_counterfactual_output)
+        print('fully_counterfactual_output', fully_counterfactual_output.shape) # fully_counterfactual_output (0,)
         partial_counterfactual_outputs = np.array(partial_counterfactual_outputs)
+        print('partial_counterfactual_outputs', partial_counterfactual_outputs.shape) # partial_counterfactual_outputs (1464, 0)
         debiased_outputs = factual_outputs - (fully_counterfactual_output * cur_x + partial_counterfactual_outputs * cur_y)
+        print('debiased_outputs', debiased_outputs.shape) # debiased_outputs (1464, 0)
         predicted_labels = torch.max(torch.Tensor(debiased_outputs),1)[1]
         return debiased_outputs, predicted_labels.numpy()
 
@@ -298,6 +304,8 @@ class TextCNN(SuperNetwork):
         self.filter_num = 100
         self.kernel_list = [1, 2, 3, 4, 5]
         self.chanel_num = 1
+        
+        self.hidden_layer = 5
 
         self.convs = nn.ModuleList([nn.Sequential(
             nn.Conv2d(self.chanel_num, self.filter_num, (kernel, self.emb_dim)),
@@ -318,9 +326,44 @@ class TextCNN(SuperNetwork):
         out = F.dropout(out)
         out = self.fc(out)
         return out
+    
+class TextCNN_vis(SuperNetwork):
+    def __init__(self):
+        super(TextCNN_vis, self).__init__()
+        self.name = 'TextCNN'
+        self.sentence_max_size = pb.XMaxLen
+        self.label_size = 4
+        self.epoch = pb.Epoch
+        self.lr = pb.Learning_Rate
+        self.emb_dim = pb.Embedding_Dimension
+        self.shape = (self.sentence_max_size, self.emb_dim)
+
+        self.filter_num = 100
+        self.kernel_list = [1, 2, 3, 4, 5]
+        self.chanel_num = 1
+
+        self.convs = nn.ModuleList([nn.Sequential(
+            nn.Conv2d(self.chanel_num, self.filter_num, (kernel, self.emb_dim)),
+            nn.ReLU(),
+            nn.MaxPool2d((self.sentence_max_size - kernel + 1, 1))
+        ) for kernel in self.kernel_list])
+
+        self.dropout = nn.Dropout(pb.Dropout_Rate)
+
+        self.fc = nn.Linear(self.filter_num * len(self.kernel_list), self.label_size)
+
+    def forward(self, xs):
+        xs = xs.unsqueeze(1)
+        in_size = xs.size(0)
+        out = [conv(xs) for conv in self.convs]
+        out = torch.cat(out, dim=1)
+        out = out.view(in_size, -1)
+        # out = F.dropout(out)
+        # out = self.fc(out)
+        return out
 
 class RoBERTa(SuperNetwork):
-    def __init__(self):
+    def __init__(self, hidden_layer=100):
         super(RoBERTa, self).__init__()
         self.name = 'RoBERTa'
         self.sentence_max_size = pb.XMaxLen
@@ -328,6 +371,36 @@ class RoBERTa(SuperNetwork):
         self.epoch = pb.Epoch
         self.lr = pb.Learning_Rate
         self.emb_dim = pb.Embedding_Dimension
+        self.shape = self.emb_dim
+
+        self.hidden_layer = hidden_layer
+        
+        self.roberta = torch.hub.load('pytorch/fairseq', 'roberta.base', force_reload=True)
+        # self.roberta = RobertaModel.from_pretrained('/home/weicheng/NLU/Corsair/roberta.base', checkpoint_file='model.pt')
+
+        self.mlp = nn.Sequential(
+            nn.Linear(self.emb_dim, self.hidden_layer),
+            nn.Tanh(),
+            nn.Dropout(pb.Dropout_Rate),
+            nn.Linear(self.hidden_layer, self.label_size)
+        )
+
+        print('Model Loaded.')
+
+    def forward(self, xs):
+        out = self.mlp(xs)
+        return out
+
+
+class RoBERTa_vis(SuperNetwork):
+    def __init__(self):
+        super(RoBERTa_vis, self).__init__()
+        self.name = 'RoBERTa'
+        self.sentence_max_size = pb.XMaxLen
+        self.label_size = 4
+        self.epoch = pb.Epoch
+        self.lr = pb.Learning_Rate
+        self.emb_dim = 768
         self.shape = self.emb_dim
 
         self.hidden_layer = 100

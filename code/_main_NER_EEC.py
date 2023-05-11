@@ -33,7 +33,7 @@ def MAIN():
     pb.Print_Line(color='blue')
 
     # prepare a specific dataset
-    # myAllDataset = MyAllDataset(pb.Dataset_Name)
+    myAllDataset = MyAllDataset(pb.Dataset_Name)
 
     if pb.Base_Model=='TextCNN':
         if pb.Dataset_Name not in ['Suning', 'Taobao']:
@@ -57,19 +57,20 @@ def MAIN():
         network = TextCNN()
         if pb.Use_GPU == True:
             network = network.cuda()
-        myAllDataset = MyAllDataset(pb.Dataset_Name)
+        # myAllDataset = MyAllDataset(pb.Dataset_Name)
+
         train_dataset = MyDataset_TextCNN(embedding, word2id, myAllDataset.train_examples)
         dev_dataset   = MyDataset_TextCNN(embedding, word2id, myAllDataset.dev_examples)
         test_dataset  = MyDataset_TextCNN(embedding, word2id, myAllDataset.test_examples)
 
     elif pb.Base_Model=='RoBERTa':
-        network = RoBERTa()
+        network = RoBERTa(hidden_layer=hidden_layer)
         if pb.Use_GPU == True:
             network = network.cuda()
         # torch.save(network.state_dict(), 'saves/model_pt_epoch_test.pt'.format(0))
-        # print('save success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        # print('model success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         # exit()
-        myAllDataset = MyAllDataset(pb.Dataset_Name)
+        # myAllDataset = MyAllDataset(pb.Dataset_Name)
         train_dataset = MyDataset_RoBERTa(myAllDataset.train_examples, network.roberta)
         dev_dataset   = MyDataset_RoBERTa(myAllDataset.dev_examples, network.roberta)
         test_dataset  = MyDataset_RoBERTa(myAllDataset.test_examples, network.roberta)
@@ -82,8 +83,9 @@ def MAIN():
         network.Train(train_loader, dev_loader, test_loader)
 
 if __name__ == "__main__":
-    # read configuration
+    # read configurationshape
     print('sys.argv={}'.format(sys.argv))
+    hidden_layer = 100
     for i in range(len(sys.argv)):
         if sys.argv[i] == '--Dataset_Name' and i+1<len(sys.argv):
             pb.Dataset_Names = [sys.argv[i+1]]
@@ -93,8 +95,8 @@ if __name__ == "__main__":
             pb.EDA = True if sys.argv[i+1]=='True' else False
         if sys.argv[i] == '--Weight' and i+1<len(sys.argv):
             pb.Weight = True if sys.argv[i+1]=='True' else False
-        if sys.argv[i] == '--Save_Path' and i+1<len(sys.argv):
-            pb.Save_Path = sys.argv[i+1]
+        if sys.argv[i] == '--hidden_layer' and i+1<len(sys.argv):
+            hidden_layer = int(sys.argv[i+1])
 
     if pb.Operation == 'Test':
         pb.Dataset_Name = pb.Evaluate_Model.split('./models/')[-1].split('-')[0]
